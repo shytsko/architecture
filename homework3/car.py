@@ -30,6 +30,7 @@ from car_body_type import CarBodyType
 from fuel_type import FuelType
 from gearbox_type import GearboxType
 from color import Color
+from homework3.wiping import Wiping
 from refueling import Refueling
 
 
@@ -45,6 +46,7 @@ class Car(ABC):
         self._engine_volume: float = 0.0
         self._fog_lights: bool = False
         self._refueling: Refueling | None = None
+        self._wiping: Wiping | None = None
 
     @abstractmethod
     def movement(self) -> None:
@@ -74,12 +76,35 @@ class Car(ABC):
     def wheels_count(self):
         return self._wheels_count
 
+    @property
+    def fuel(self):
+        return self._fuel_type
+
     def go_to_refueling(self, refueling_station: Refueling):
         self._refueling = refueling_station
+        print(f"Автомобиль {self} заехал на заправочную станцию {self._refueling}")
 
     def refuel(self):
         if self._refueling:
             self._refueling.fuel(self._fuel_type)
 
     def leave_refueling(self):
+        print(f"Автомобиль {self} уехал с заправочной станции {self._refueling}")
         self._refueling = None
+
+    def go_to_washing(self, washing_station: Wiping):
+        self._wiping = washing_station
+        print(f"Автомобиль {self} заехал на мойку {self._wiping}")
+
+    def washing(self):
+        if self._wiping:
+            self._wiping.wip_mirrors()
+            self._wiping.wip_windshield()
+            self._wiping.wip_head_lights()
+
+    def leave_washing(self):
+        print(f"Автомобиль {self} уехал с мойки {self._wiping}")
+        self._wiping = None
+
+    def __str__(self):
+        return f"{self._brand} {self._model}"
