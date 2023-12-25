@@ -18,8 +18,8 @@ class ReservationView(View):
         for table in tables:
             print(table)
             for reservation in table.reservations:
-                print(f'\tЗарезервирован на {reservation.datetime()}'
-                      f' клиентом {reservation.client()}, номер брони {reservation.id}')
+                print(f'\tЗарезервирован на {reservation.datetime}'
+                      f' клиентом {reservation.client}, номер брони {reservation.id}')
         print('----------------------------------------')
 
     def reservation_table(self, order_date: datetime, table_no: int, client_name: str):

@@ -36,12 +36,15 @@ class Reservation:
     def id(self):
         return self._id
 
+    @property
     def table(self):
         return self._table
 
+    @property
     def client(self):
         return self._client
 
+    @property
     def datetime(self):
         return self._datetime
 

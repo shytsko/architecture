@@ -27,7 +27,7 @@ class TableService(Model):
     def reservation_table_cancellation(self, reservation_id: int):
         reservation = self._reservations.get(reservation_id)
         if reservation is not None:
-            reservation.table().reservations.remove(reservation)
+            reservation.table.reservations.remove(reservation)
             self._reservations.pop(reservation_id)
         else:
             raise RuntimeError('Ошибка отмены бронирования (некорректный номер бронирования)')
