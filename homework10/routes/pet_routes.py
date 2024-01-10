@@ -4,15 +4,15 @@ from schemas.pet import PetIn, PetOut, PetUpdate
 from services.abc_repository.abc_pet_repository import ABCPetRepository
 from models.pet import Pet
 
-pet_router = APIRouter(prefix='/pet', tags=['Pet API'])
+pet_router = APIRouter(prefix='/pet', tags=['Pet'])
 
 
-@pet_router.get('/get-all', response_model=list[PetOut])
+@pet_router.get('/get-all', response_model=list[PetOut], operation_id='pet_get_all')
 async def get_all(pet_repository: ABCPetRepository = Depends(get_pet_repository)):
     return [PetOut(**pet.as_dict()) for pet in pet_repository.get_all()]
 
 
-@pet_router.get('/get/{pet_id}', response_model=PetOut)
+@pet_router.get('/get/{pet_id}', response_model=PetOut, operation_id='pet_get_by_id')
 async def get_by_id(pet_id: int, pet_repository: ABCPetRepository = Depends(get_pet_repository)):
     pet = pet_repository.get_by_id(pet_id)
     if pet is not None:
@@ -21,7 +21,7 @@ async def get_by_id(pet_id: int, pet_repository: ABCPetRepository = Depends(get_
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Pet with ID {pet_id} does not exist')
 
 
-@pet_router.post('/create', response_model=PetOut)
+@pet_router.post('/create', response_model=PetOut, operation_id='pet_create')
 async def create(new_pet_data: PetIn, pet_repository: ABCPetRepository = Depends(get_pet_repository)):
     new_pet_id = pet_repository.create(Pet(pet_id=None, **new_pet_data.model_dump()))
     new_pet = pet_repository.get_by_id(new_pet_id)
@@ -32,13 +32,13 @@ async def create(new_pet_data: PetIn, pet_repository: ABCPetRepository = Depends
         raise HTTPException(status_code=status.HTTP_507_INSUFFICIENT_STORAGE, detail='Failed to create new pet')
 
 
-@pet_router.delete('/delete/{pet_id}')
+@pet_router.delete('/delete/{pet_id}', operation_id='pet_delete')
 async def delete(pet_id: int, pet_repository: ABCPetRepository = Depends(get_pet_repository)):
     if not pet_repository.delete(pet_id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Pet with ID {pet_id} does not exist')
 
 
-@pet_router.put('/update', response_model=PetOut)
+@pet_router.put('/update', response_model=PetOut, operation_id='pet_update')
 async def update(update_pet_data: PetUpdate, pet_repository: ABCPetRepository = Depends(get_pet_repository)):
     pet = pet_repository.get_by_id(update_pet_data.pet_id)
     if pet is not None:
