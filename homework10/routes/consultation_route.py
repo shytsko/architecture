@@ -4,15 +4,15 @@ from schemas.consultation import ConsultationIn, ConsultationOut, ConsultationUp
 from services.abc_repository.abc_consultation_repository import ABCConsultationRepository
 from models.consultation import Consultation
 
-consultation_router = APIRouter(prefix='/consultation', tags=['Consultation API'])
+consultation_router = APIRouter(prefix='/consultation', tags=['Consultation'])
 
 
-@consultation_router.get('/get-all', response_model=list[ConsultationOut])
+@consultation_router.get('/get-all', response_model=list[ConsultationOut], operation_id='consultation_get_all')
 async def get_all(consultation_repository: ABCConsultationRepository = Depends(get_consultation_repository)):
     return [ConsultationOut(**consultation.as_dict()) for consultation in consultation_repository.get_all()]
 
 
-@consultation_router.get('/get/{consultation_id}', response_model=ConsultationOut)
+@consultation_router.get('/get/{consultation_id}', response_model=ConsultationOut, operation_id='consultation_get_by_id')
 async def get_by_id(consultation_id: int,
                     consultation_repository: ABCConsultationRepository = Depends(get_consultation_repository)):
     consultation = consultation_repository.get_by_id(consultation_id)
@@ -23,7 +23,7 @@ async def get_by_id(consultation_id: int,
                             detail=f'Consultation with ID {consultation_id} does not exist')
 
 
-@consultation_router.post('/create', response_model=ConsultationOut)
+@consultation_router.post('/create', response_model=ConsultationOut, operation_id='consultation_create')
 async def create(new_consultation_data: ConsultationIn,
                  consultation_repository: ABCConsultationRepository = Depends(get_consultation_repository)):
     new_consultation_id = consultation_repository.create(
@@ -37,7 +37,7 @@ async def create(new_consultation_data: ConsultationIn,
                             detail='Failed to create new consultation')
 
 
-@consultation_router.delete('/delete/{consultation_id}')
+@consultation_router.delete('/delete/{consultation_id}', operation_id='consultation_delete')
 async def delete(consultation_id: int,
                  consultation_repository: ABCConsultationRepository = Depends(get_consultation_repository)):
     if not consultation_repository.delete(consultation_id):
@@ -45,7 +45,7 @@ async def delete(consultation_id: int,
                             detail=f'Consultation with ID {consultation_id} does not exist')
 
 
-@consultation_router.put('/update', response_model=ConsultationOut)
+@consultation_router.put('/update', response_model=ConsultationOut, operation_id='consultation_update')
 async def update(update_consultation_data: ConsultationUpdate,
                  consultation_repository: ABCConsultationRepository = Depends(get_consultation_repository)):
     consultation = consultation_repository.get_by_id(update_consultation_data.consultation_id)
